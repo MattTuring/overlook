@@ -1,6 +1,60 @@
-/* This is an example of using Sass, otherwise plain CSS works too*/
-$primary-background: pink;
-
 body {
-  background-color: $primary-background;
+  background: url('../images/hotel.jpeg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.manager-body {
+  background: url('../images/room.jpg') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.login {
+  margin-top: 10%;
+  width: 20%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.room-info {
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.rooms {
+  border: black solid 1px;
+  margin: 5px;
+  padding: 2px;
+  box-shadow: 2px 3px 7px 0px #0000004a;
+  border-radius: 2px;
+}
+
+section {
+  background-color: white;
+  box-shadow: 5px 5px 10px #4b4f56;
+  padding: 5px;
+  border-radius: 2px;
+  opacity: .95;
+  text-align: center;
+  margin: 10px;
+}
+
+button {
+  border-radius: 5px;
+  padding: 5px;
+  margin: 5px;
+  background-color: #fff8dd;
+}
+
+input {
+    border-radius: 2px;
+    margin: 5px;
+    height: 25px;
+}
+
+.logo {
+  height: 100px;
+}
+h3 {
+  margin-top: 0px;
 }

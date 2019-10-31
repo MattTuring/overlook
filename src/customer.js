@@ -11,16 +11,14 @@ import './css/base.scss';
 import './images/turing-logo.png'
 //import './images/hotel.jpeg'
 
-//login functions
-$('#submit').click(event => {
-  event.preventDefault();
+//date
+function todaysDate() {
+  let today = new Date();
+  let dd = String(today.getDate()).padStart(2, '0');
+  let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+  let yyyy = today.getFullYear();
+  today = mm + '/' + dd + '/' + yyyy;
+  return today;
+}
 
-  if ($('#username').val() === 'manager' && $('#password').val() === 'overlook2019') {
-    window.location = './manager.html'
-  }
-  let userID = parseInt($('#username').val().slice(-2));
-
-  if ($('#username').val().includes('customer') && $('#password').val() === 'overlook2019' && userID > 0 && userID <= 50) {
-    window.location = './customer.html'
-  }
-})
+$('.date').html = todaysDate();
