@@ -28,10 +28,12 @@ body {
 
 .rooms {
   border: black solid 1px;
+  display: inline-block;
   margin: 5px;
   padding: 2px;
   box-shadow: 2px 3px 7px 0px #0000004a;
   border-radius: 2px;
+  width: min-content;
 }
 
 section {

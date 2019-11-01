@@ -3,7 +3,7 @@
 
 // An example of how you import jQuery into a JS file if you use jQuery in that file
 import $ from 'jquery';
-
+import Manager from './ManagerClass'
 // An example of how you tell webpack to use a CSS (SCSS) file
 import './css/base.scss';
 
@@ -12,33 +12,9 @@ import './images/turing-logo.png'
 //import './images/hotel.jpeg'
 
 //date
-function todaysDate() {
-  let today = new Date();
-  let dd = String(today.getDate()).padStart(2, '0');
-  let mm = String(today.getMonth() + 1).padStart(2, '0');
-  let yyyy = today.getFullYear();
-  today = yyyy + '/' + mm + '/' + dd;
-  return today;
-}
+let manager = new Manager();
 
-$('.date').html(todaysDate());
-
-function bookedToday(data) {
-  let result = data.filter(room => {
-    return room.date === todaysDate();
-  })
-  return result
-}
-
-function availableToday(rooms, booked) {
-  let roomNumber = rooms.map(room => {
-    return room.number;
-  })
-  booked.forEach(booking => {
-    roomNumber.splice(roomNumber.indexOf(booking.roomNumber), 1)
-  })
-  return roomNumber
-}
+$('.date').html(manager.todaysDate());
 
 let bookingData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings')
   .then(data => data.json())
@@ -49,23 +25,11 @@ let roomData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/rooms/r
   .then(data => data.json())
   .then(data => data.rooms)
 
-function revenue(rooms, booked) {
-  let rev = booked.reduce((acc, booking) => {
-    rooms.forEach(room => {
-      if (room.number === booking.roomNumber) {
-        acc += room.costPerNight;
-      }
-    })
-    return acc
-  }, 0)
-  return rev
-}
-
 Promise.all([bookingData, roomData]).then((requiredData) => {
   const rooms = requiredData[1];
   const booked = requiredData[0];
-  let bookedTodayData = bookedToday(booked);
-  $('.revenue').html(revenue(rooms, bookedTodayData).toFixed(2));
+  let bookedTodayData = manager.booked(booked);
+  $('.revenue').html(manager.totalSpend(rooms, bookedTodayData).toFixed(2));
   $('.percentage').html((bookedTodayData.length/rooms.length) * 100)
-  availableToday(rooms, bookedTodayData).forEach(room => {$('.available').append(`<span class="rooms">${room}</span>`)})
+  manager.availableToday(rooms, bookedTodayData).forEach(room => {$('.available').append(`<span class="rooms">${room}</span>`)})
 }).catch(data => console.log('Fetch error', data))
