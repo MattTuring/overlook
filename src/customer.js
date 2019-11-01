@@ -12,6 +12,7 @@ import './images/turing-logo.png'
 //import './images/hotel.jpeg'
 
 let customer = new Customer()
+let userID;
 
 let bookingData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings')
   .then(data => data.json())
@@ -26,9 +27,45 @@ let roomData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/rooms/r
 
 
 Promise.all([bookingData, roomData]).then((requiredData) => {
-  let userID = parseInt(localStorage.getItem('userID'))
-  const rooms = requiredData[1];
-  const booked = requiredData[0];
-  customer.myBookings(booked, userID).forEach(room => {$('.bookings').append(`<p class="rooms">Room: ${room.roomNumber} ${room.date}</p>`)})
-  $('.spending').html(customer.totalSpend(rooms, customer.myBookings(booked, userID)))
+  userID = parseInt(localStorage.getItem('userID'))
+  customer.rooms = requiredData[1];
+  customer.booked = requiredData[0];
+  customer.myBookings(customer.booked, userID).forEach(room => {$('.bookings').append(`<p class="rooms">Room: ${room.roomNumber} ${room.date}</p>`)})
+  $('.spending').html(customer.totalSpend(customer.rooms, customer.myBookings(customer.booked, userID)));
 }).catch(data => console.log('Fetch error', data))
+
+$('#future-bookings').hide();
+
+$('#book-date').click(() => {
+  if ($('#book-date').val() != "") {
+    $('#future-bookings').toggle()
+    let available = customer.bookings(customer.booked, $('#book-date').val().replace('-', '/').replace('-', '/'))
+    customer.availableToday(customer.rooms, available).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+  }
+});
+
+
+$('.select').change(() => {
+  $('#upcoming-bookings').html('')
+  let available = customer.bookings(customer.booked, $('#book-date').val().replace('-', '/').replace('-', '/'))
+  customer.availableToday(customer.rooms, available, $('.select').val()).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+  if ($('#upcoming-bookings').html() === "") {
+    $('#upcoming-bookings').append(`<span>We are very sorry for the inconveince, there are no rooms of this type. Please select another type or date.</span>`)
+  }
+})
+
+$('#upcoming-bookings').click((event) => {
+  console.log('yes')
+  fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings', {
+        method: 'POST',
+        headers: {
+          'Content-Type': "application/json"
+        },
+        body: JSON.stringify({
+          userID: userID,
+          date: $('#book-date').val().replace('-', '/').replace('-', '/'),
+          roomNumber: parseInt(event.target.id)
+        })
+      }).catch(error => console.log('There was an error submitting your booking request', error))
+      $('#upcoming-bookings').html('<span>SUCCESS!</span>')
+})
