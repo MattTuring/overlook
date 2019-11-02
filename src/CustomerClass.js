@@ -4,9 +4,9 @@ class Customer {
     this.booked;
   }
 
-  totalSpend(rooms, booked) {
-    let spend = booked.reduce((acc, booking) => {
-      rooms.forEach(room => {
+  totalSpend(bookings) {
+    let spend = bookings.reduce((acc, booking) => {
+      this.rooms.forEach(room => {
         if (room.number === parseInt(booking.roomNumber)) {
           acc += room.costPerNight
         }
@@ -16,18 +16,20 @@ class Customer {
     return spend.toFixed(2)
   }
 
-  myBookings(booked, userID) {
-    let result = booked.filter(booking => {
+  myBookings(userID) {
+    console.log(userID)
+    let result = this.booked.filter(booking => {
       return booking.userID === userID
     })
     return result.sort((a, b) => new Date(a.date) - new Date(b.date))
   }
 
-  availableToday(rooms, booked, type) {
-    let roomNumber = rooms.map(room => {
+  availableToday(bookings, type) {
+
+    let roomNumber = this.rooms.map(room => {
       return room.number;
     })
-    booked.forEach(booking => {
+    bookings.forEach(booking => {
       roomNumber.splice(roomNumber.indexOf(parseInt(booking.roomNumber)), 1)
     })
     let roomDetials = roomNumber.reduce((acc,number) => {
@@ -56,8 +58,8 @@ class Customer {
     return today;
   }
 
-  bookings(data, date) {
-    let result = data.filter(room => {
+  bookings(date) {
+    let result = this.booked.filter(room => {
       if (!date) {
         return room.date === this.todaysDate();
       }

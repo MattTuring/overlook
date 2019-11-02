@@ -28,8 +28,9 @@ let roomData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/rooms/r
 Promise.all([bookingData, roomData]).then((requiredData) => {
   manager.rooms = requiredData[1];
   manager.booked = requiredData[0];
-  let bookedTodayData = manager.bookings(manager.booked);
-  $('.revenue').html(manager.totalSpend(manager.rooms, bookedTodayData).toFixed(2));
+  let bookedTodayData = manager.bookings();
+  $('.revenue').html(manager.totalSpend(bookedTodayData));
   $('.percentage').html((bookedTodayData.length/manager.rooms.length) * 100)
-  manager.availableToday(manager.rooms, bookedTodayData).forEach(room => {$('.available').append(`<span class="rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+    console.log(manager.availableToday(bookedTodayData))
+  manager.availableToday(bookedTodayData).forEach(room => {$('.available').append(`<span class="rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
 }).catch(data => console.log('Fetch error', data))

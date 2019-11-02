@@ -30,8 +30,8 @@ Promise.all([bookingData, roomData]).then((requiredData) => {
   userID = parseInt(localStorage.getItem('userID'))
   customer.rooms = requiredData[1];
   customer.booked = requiredData[0];
-  customer.myBookings(customer.booked, userID).forEach(room => {$('.bookings').append(`<p class="rooms">Room: ${room.roomNumber} ${room.date}</p>`)})
-  $('.spending').html(customer.totalSpend(customer.rooms, customer.myBookings(customer.booked, userID)));
+  customer.myBookings(userID).forEach(room => {$('.bookings').append(`<p class="rooms">Room: ${room.roomNumber} ${room.date}</p>`)})
+  $('.spending').html(customer.totalSpend(customer.myBookings(userID)));
 }).catch(data => console.log('Fetch error', data))
 
 $('#future-bookings').hide();
@@ -39,16 +39,16 @@ $('#future-bookings').hide();
 $('#book-date').click(() => {
   if ($('#book-date').val() != "") {
     $('#future-bookings').toggle()
-    let available = customer.bookings(customer.booked, $('#book-date').val().replace('-', '/').replace('-', '/'))
-    customer.availableToday(customer.rooms, available).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+    let available = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
+    customer.availableToday(available).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
   }
 });
 
 
 $('.select').change(() => {
   $('#upcoming-bookings').html('')
-  let available = customer.bookings(customer.booked, $('#book-date').val().replace('-', '/').replace('-', '/'))
-  customer.availableToday(customer.rooms, available, $('.select').val()).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+  let available = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
+  customer.availableToday(available, $('.select').val()).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
   if ($('#upcoming-bookings').html() === "") {
     $('#upcoming-bookings').append(`<span>We are very sorry for the inconveince, there are no rooms of this type. Please select another type or date.</span>`)
   }
