@@ -10,8 +10,6 @@ import './css/base.scss';
 // An example of how you tell webpack to use an image (also need to link to it in the index.html)
 import './images/turing-logo.png'
 //import './images/hotel.jpeg'
-let userID;
-
 
 //login functions
 $('#submit').click(event => {
@@ -20,11 +18,7 @@ $('#submit').click(event => {
   if ($('#username').val() === 'manager' && $('#password').val() === 'overlook2019') {
     window.location = './manager.html'
   }
-
-  if ($('#username').val().includes('customer')) {
-    userID = parseInt($('#username').val().split('r')[1]);
-    localStorage.setItem('userID', userID);
-  }
+  let userID = parseInt($('#username').val().slice(-2));
 
   if ($('#username').val().includes('customer') && $('#password').val() === 'overlook2019' && userID > 0 && userID <= 50) {
     window.location = './customer.html'

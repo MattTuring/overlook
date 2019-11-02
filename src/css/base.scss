@@ -4,7 +4,6 @@
   font-family: 'Roboto', sans-serif;
 }
 
-
 body {
   background: url('../images/hotel.jpeg') no-repeat center center fixed;
   background-size: cover;
@@ -79,4 +78,11 @@ input, select {
 
 h3 {
   margin-top: 0px;
+}
+
+
+@media screen and (max-width: 730px) {
+  .room-info {
+    width: 95%;
+  }
 }
