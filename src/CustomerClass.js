@@ -1,7 +1,7 @@
 class Customer {
-  constructor(booked, rooms) {
-    this.rooms = rooms;
-    this.booked = booked;
+  constructor() {
+    this.rooms;
+    this.booked;
   }
 
   getTotalSpend(bookings) {
