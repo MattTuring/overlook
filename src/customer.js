@@ -28,16 +28,16 @@ let roomData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/rooms/r
 
 Promise.all([bookingData, roomData]).then((requiredData) => {
   userID = parseInt(localStorage.getItem('userID'))
-  customer.rooms = requiredData[1];
   customer.booked = requiredData[0];
-  customer.myBookings(userID).forEach(room => {$('.bookings').append(`<p class="rooms">Room: ${room.roomNumber} ${room.date}</p>`)})
-  $('.spending').html(customer.totalSpend(customer.myBookings(userID)));
+  customer.rooms = requiredData[1];
+  customer.getMyBookings(userID).forEach(room => {$('.bookings').append(`<p class="rooms">Room: ${room.roomNumber} ${room.date}</p>`)})
+  $('.spending').html(customer.getTotalSpend(customer.getMyBookings(userID)));
 }).catch(data => console.log('Fetch error', data))
 
 $('#future-bookings').hide();
 
 $('#book-date').click(() => {
-  if ($('#book-date').val() != "") {
+  if ($('#book-date').val() !== "") {
     $('#future-bookings').toggle()
     let available = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
     customer.availableToday(available).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
@@ -55,17 +55,16 @@ $('.select').change(() => {
 })
 
 $('#upcoming-bookings').click((event) => {
-  console.log('yes')
   fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': "application/json"
-        },
-        body: JSON.stringify({
-          userID: userID,
-          date: $('#book-date').val().replace('-', '/').replace('-', '/'),
-          roomNumber: parseInt(event.target.id)
-        })
-      }).catch(error => console.log('There was an error submitting your booking request', error))
-      $('#upcoming-bookings').html('<span>SUCCESS!</span>')
+    method: 'POST',
+    headers: {
+      'Content-Type': "application/json"
+    },
+    body: JSON.stringify({
+      userID: userID,
+      date: $('#book-date').val().replace('-', '/').replace('-', '/'),
+      roomNumber: parseInt(event.target.id)
+    })
+  }).catch(error => console.log('There was an error submitting your booking request', error))
+  $(event.target).html('SUCCESS!')
 })

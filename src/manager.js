@@ -13,24 +13,102 @@ import './images/turing-logo.png'
 
 //date
 let manager = new Manager();
+$('#future-bookings').hide();
 
-$('.date').html(manager.todaysDate());
 
 let bookingData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings')
   .then(data => data.json())
   .then(data => data.bookings)
 
-
 let roomData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/rooms/rooms')
   .then(data => data.json())
   .then(data => data.rooms)
 
-Promise.all([bookingData, roomData]).then((requiredData) => {
-  manager.rooms = requiredData[1];
+let userData = fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/users/users')
+  .then(data => data.json())
+  .then(data => data.users)
+
+Promise.all([bookingData, roomData, userData]).then((requiredData) => {
   manager.booked = requiredData[0];
-  let bookedTodayData = manager.bookings();
-  $('.revenue').html(manager.totalSpend(bookedTodayData));
+  manager.rooms = requiredData[1];
+  manager.users = requiredData[2];
+  let bookedTodayData = manager.bookings(manager.todaysDate());
+  $('.date').html(manager.todaysDate());
+  $('.revenue').html(manager.getTotalSpend(bookedTodayData));
   $('.percentage').html((bookedTodayData.length/manager.rooms.length) * 100)
-    console.log(manager.availableToday(bookedTodayData))
   manager.availableToday(bookedTodayData).forEach(room => {$('.available').append(`<span class="rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
 }).catch(data => console.log('Fetch error', data))
+
+$('#search').keyup(() => {
+  $('#search-results').html('')
+  manager.customerSearch($('#search').val()).forEach(customer => {
+    $('#search-results').append(`<span id="${customer.id}" class="upcoming-rooms">Name: ${customer.name}</span>`)
+  })
+})
+
+$('#search-results').click(event => {
+  $('.bookings').html(`<span data-id="${event.target.id}" class="spending"></span>`)
+  if (event.target.id > 0 && event.target.id <= 50) {
+    manager.getMyBookings(parseInt(event.target.id)).forEach(room => {$('.bookings').append(`<p class="upcoming-rooms" data-date="${room.date}" data-bookingid="${room.id}">Room: ${room.roomNumber} ${room.date}</p>`)})
+    $('.spending').html(`${event.target.innerHTML.split(" ")[1]} ${event.target.innerHTML.split(" ")[2]}: $${manager.getTotalSpend(manager.getMyBookings(parseInt(event.target.id)))}<br>Click to Delete Booking<br>`);
+    $('#future-bookings').toggle();
+    $('#select-area').hide()
+  }
+})
+
+$('#book-date').click(() => {
+  if ($('#book-date').val() !== "") {
+    $('#select-area').toggle()
+    let available = manager.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
+    manager.availableToday(available).forEach(room => {
+      $('#upcoming-bookings').append(`<span data-room="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)
+    })
+  }
+});
+
+
+$('.select').change(() => {
+  $('#upcoming-bookings').html('')
+  let available = manager.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
+  manager.availableToday(available, $('.select').val()).forEach(room => {
+    $('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)
+  })
+  if ($('#upcoming-bookings').html() === "") {
+    $('#upcoming-bookings').append(`<span>We are very sorry for the inconveince, there are no rooms of this type. Please select another type or date.</span>`)
+  }
+})
+
+$('#upcoming-bookings').click((event) => {
+  fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings', {
+    method: 'POST',
+    headers: {
+      'Content-Type': "application/json"
+    },
+    body: JSON.stringify({
+      userID: parseInt($('.spending').data('id')),
+      date: $('#book-date').val().replace('-', '/').replace('-', '/'),
+      roomNumber: parseInt(event.target.dataset.room)
+    })
+  }).catch(error => console.log('There was an error submitting your booking request', error))
+  $(event.target).html('SUCCESS!')
+})
+
+$(".bookings").click(event => {
+  console.log(event.target.dataset.date < manager.todaysDate())
+  if (event.target.dataset.date < manager.todaysDate()) {
+    $(event.target).html('Cannot delete bookings from the past.')
+    return
+  }
+  if (event.target.dataset.bookingid > 0) {
+    fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings', {
+      method: 'delete',
+      headers: {
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify({
+        id: parseInt(event.target.dataset.bookingid)
+      })
+    })
+    $(event.target).html('DELETED');
+  }
+})

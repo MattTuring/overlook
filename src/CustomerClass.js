@@ -4,7 +4,7 @@ class Customer {
     this.booked;
   }
 
-  totalSpend(bookings) {
+  getTotalSpend(bookings) {
     let spend = bookings.reduce((acc, booking) => {
       this.rooms.forEach(room => {
         if (room.number === parseInt(booking.roomNumber)) {
@@ -16,8 +16,7 @@ class Customer {
     return spend.toFixed(2)
   }
 
-  myBookings(userID) {
-    console.log(userID)
+  getMyBookings(userID) {
     let result = this.booked.filter(booking => {
       return booking.userID === userID
     })
@@ -42,9 +41,9 @@ class Customer {
     if (!type || type === 'all') {
       return roomDetials;
     }
-      return roomDetials.filter(room => {
-        return room.roomType === type
-      })
+    return roomDetials.filter(room => {
+      return room.roomType === type
+    })
   }
 
 
@@ -60,11 +59,7 @@ class Customer {
 
   bookings(date) {
     let result = this.booked.filter(room => {
-      if (!date) {
-        return room.date === this.todaysDate();
-      }
       return room.date === date
-
     })
     return result
   }
