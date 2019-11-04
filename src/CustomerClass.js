@@ -24,7 +24,6 @@ class Customer {
   }
 
   availableToday(bookings, type) {
-
     let roomNumber = this.rooms.map(room => {
       return room.number;
     })
@@ -45,8 +44,6 @@ class Customer {
       return room.roomType === type
     })
   }
-
-
 
   todaysDate() {
     let today = new Date();

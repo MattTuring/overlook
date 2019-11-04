@@ -36,19 +36,20 @@ Promise.all([bookingData, roomData]).then((requiredData) => {
 
 $('#future-bookings').hide();
 
-$('#book-date').click(() => {
+$('#customer-submit').click(() => {
   if ($('#book-date').val() !== "") {
-    $('#future-bookings').toggle()
-    let available = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
-    customer.availableToday(available).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+    $('#future-bookings').slideDown()
+    $('#upcoming-bookings').html('')
+    let bookings = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
+    customer.availableToday(bookings).forEach(room => {$('#upcoming-bookings').append(`<button id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</button>`)})
   }
 });
 
 
 $('.select').change(() => {
   $('#upcoming-bookings').html('')
-  let available = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
-  customer.availableToday(available, $('.select').val()).forEach(room => {$('#upcoming-bookings').append(`<span id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</span>`)})
+  let bookings = customer.bookings($('#book-date').val().replace('-', '/').replace('-', '/'))
+  customer.availableToday(bookings, $('.select').val()).forEach(room => {$('#upcoming-bookings').append(`<button id="${room.number}" class="upcoming-rooms">Room:${room.number} Beds: ${room.numBeds} ${room.bedSize.toUpperCase()} Price: $${room.costPerNight}</button>`)})
   if ($('#upcoming-bookings').html() === "") {
     $('#upcoming-bookings').append(`<span>We are very sorry for the inconveince, there are no rooms of this type. Please select another type or date.</span>`)
   }
