@@ -56,16 +56,18 @@ $('.select').change(() => {
 })
 
 $('#upcoming-bookings').click((event) => {
-  fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings', {
-    method: 'POST',
-    headers: {
-      'Content-Type': "application/json"
-    },
-    body: JSON.stringify({
-      userID: userID,
-      date: $('#book-date').val().replace('-', '/').replace('-', '/'),
-      roomNumber: parseInt(event.target.id)
-    })
-  }).catch(error => console.log('There was an error submitting your booking request', error))
-  $(event.target).html('SUCCESS!')
+  if ($(event.target).hasClass('upcoming-rooms')) {
+    fetch('https://fe-apps.herokuapp.com/api/v1/overlook/1904/bookings/bookings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': "application/json"
+      },
+      body: JSON.stringify({
+        userID: userID,
+        date: $('#book-date').val().replace('-', '/').replace('-', '/'),
+        roomNumber: parseInt(event.target.id)
+      })
+    }).catch(error => console.log('There was an error submitting your booking request', error))
+    $(event.target).html('SUCCESS!')
+  }
 })
