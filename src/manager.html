@@ -1,9 +1,3 @@
-<!-- As a manager, upon logging in:
-
-I should see a dashboard page that shows me:
-Total Rooms Available for today’s date
- -->
-
 <!DOCTYPE html>
 <html lang="en-US">
   <head>
@@ -18,13 +12,14 @@ Total Rooms Available for today’s date
     <h2><span class="available"></span></h2>
   </section>
   <section class="room-info">
-    <h2>Search:<input id="search" type="text" placeholder="Customer Name" name="" value=""></h2>
+    <label for="search">Search:</label><input id="search" type="text" placeholder="Customer Name" name="" value="">
     <h2 id="search-results"></h2>
     <h2 class="bookings"></h2>
     <article id="future-bookings">
       <h2>Book A New Room</h2>
+        <label for="book-date">Date for Booking:</label>
         <input id="book-date" type="date" name="" value="">
-        <button id="customer-submit" type="button" name="button">Submit</button>
+        <button id="submit" type="button" name="button">Submit</button>
         <h2 id="select-area"><span>Room Type:</span><select class="select" name="cars">
           <option value="all">All</option>
           <option value="residential suite">Residential Suite</option>

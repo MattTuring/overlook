@@ -1,22 +1,24 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
 
+@mixin background-image($image) {
+  background: url($image) no-repeat center center fixed;
+  background-size: cover;
+}
+
 * {
   font-family: 'Roboto', sans-serif;
 }
 
 body {
-  background: url('../images/hotel.jpeg') no-repeat center center fixed;
-  background-size: cover;
+  @include background-image('../images/hotel.jpeg')
 }
 
 .manager-body {
-  background: url('../images/room.jpg') no-repeat center center fixed;
-  background-size: cover;
+  @include background-image('../images/room.jpg')
 }
 
 .customer-body {
-  background: url('../images/customer.jpg') no-repeat center center fixed;
-  background-size: cover;
+  @include background-image('../images/customer.jpg')
 }
 
 .login {
@@ -34,12 +36,15 @@ body {
 
 .rooms, .upcoming-rooms {
   border: black solid 1px;
+  background-color: white;
   display: inline-block;
   margin: 5px;
   padding: 2px;
   box-shadow: 2px 3px 7px 0px #0000004a;
   border-radius: 2px;
   width: min-content;
+  font-size: 1em;
+  font-weight: bold;
 }
 
 .upcoming-rooms:hover {
@@ -81,8 +86,12 @@ h3 {
 }
 
 
-@media screen and (max-width: 730px) {
+@media screen and (max-width: 830px) {
   .room-info {
     width: 95%;
+  }
+
+  .login {
+    width: 60%;
   }
 }
